@@ -1,0 +1,6 @@
+# Salasanat ja tunnukset - ei koskaan GitHubiin
+secrets.h
+
+# Editorien ja kaannosten tiedostot
+.vscode/
+build/
