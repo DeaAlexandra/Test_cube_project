@@ -43,6 +43,11 @@ void naytaAnalogYla(int sensori);          // ylänäyttö: Analoginen + mittaus
 void naytaAnalogiaValikko();               // alanäyttö: Valitse mittaus 1/2/3
 void naytaTestipisteValikko(int sensori);  // alanäyttö: testipisteet 1-5 + 0=Tietokantamittaus
 
+// Tietokantaan lähetys (alanäyttö), analoginen ja digitaalinen
+void naytaLahetetaan();
+void naytaLahetetty();
+void naytaLahetysEpaonnistui();       // 0=Yritä uudelleen
+
 // Analoginen tietokantamittaus (alanäyttö)
 void naytaRyhmatunnusPuuttuu();
 void naytaTietokantamittausKaynnissa(uint8_t piste, uint8_t kaikki);

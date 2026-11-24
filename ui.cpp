@@ -2,6 +2,7 @@
 #include "analog.h"
 #include "asetukset.h"
 #include "ryhma.h"
+#include "tietokanta.h"
 #include "digital.h"
 #include "display.h"
 #include "errormode.h"
@@ -126,6 +127,8 @@ void uiKasitteleNappi() {
         digitalAloitaMittaus(valittu_kanava);     // sama kanava uudelleen
       } else if (nappi == '#') {
         uiResetoi();
+      } else if (nappi == '0') {
+        tietokantaLaheta();                       // 0=Lähetä / 0=Yritä uudelleen
       }
       return;
 

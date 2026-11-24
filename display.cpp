@@ -3,6 +3,7 @@
 #include "digital.h"
 #include "lang.h"
 #include "ryhma.h"
+#include "tietokanta.h"
 
 // ===== NÄYTÖT =====
 LiquidCrystal_I2C lcd1(0x23, 20, 4);
@@ -378,6 +379,42 @@ void naytaTestipisteValikko(int sensori) {
   riviF(lcd2, 3, TXT("0=Tietokantamittaus", "0=Database test"));
 }
 
+// ===== LÄHETYS (alanäyttö) =====
+// Tulosnäkymän rivi 3: "0=Lähetä", jos hyväksytty tulos odottaa lähetystä
+// ja ryhmätunnus on asetettu (tietokanta.h). Muuten rivi on tyhjä.
+static void lahetysRivi() {
+  if (tietokantaVoiLahettaa()) riviF(lcd2, 2, TXT("0=L" LCD_AE "het" LCD_AE, "0=Send"));
+  else                         riviF(lcd2, 2, F(""));
+}
+
+//   Lähetetään...
+void naytaLahetetaan() {
+  riviF(lcd2, 0, TXT("L" LCD_AE "hetet" LCD_AE LCD_AE "n...", "Sending..."));
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   Lähetetty!
+//   (* ja # toimivat kuten tulosnäkymässä)
+void naytaLahetetty() {
+  riviF(lcd2, 0, TXT("L" LCD_AE "hetetty!", "Sent!"));
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   Lähetys epäonnistui
+//
+//   0=Yritä uudelleen
+//   *=Uusi     #=Valikko
+void naytaLahetysEpaonnistui() {
+  riviF(lcd2, 0, TXT("L" LCD_AE "hetys ep" LCD_AE "onnistui", "Sending failed"));
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 2, TXT("0=Yrit" LCD_AE " uudelleen", "0=Try again"));
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
+}
+
 // ===== ANALOGINEN: TIETOKANTAMITTAUS (alanäyttö) =====
 //   Ryhmätunnus puuttuu
 //   Aseta tunnus
@@ -405,7 +442,7 @@ void naytaTietokantamittausKaynnissa(uint8_t piste, uint8_t kaikki) {
 
 //   Hyväksytty!                 Virhe!
 //   Pisteet: 5/5                Pisteet: 3/5
-//   (vaihe 8: 0=Lähetä)         Virhe pisteessä: 2
+//   0=Lähetä                    Virhe pisteessä: 2
 //   *=Uusi     #=Valikko        *=Uusi     #=Valikko
 // virhePiste = ensimmäinen hylätty piste (1-5), -1 jos kaikki hyväksytty.
 void naytaTietokantaTulos(uint8_t hyvaksytyt, uint8_t kaikki, int8_t virhePiste) {
@@ -420,7 +457,7 @@ void naytaTietokantaTulos(uint8_t hyvaksytyt, uint8_t kaikki, int8_t virhePiste)
   riviR(lcd2, 1, rivi);
 
   if (ok) {
-    riviF(lcd2, 2, F(""));
+    lahetysRivi();
   } else {
     snprintf_P(rivi, sizeof(rivi), PSTR("%S%d"),
                TXT("Virhe pisteess" LCD_AE ": ", "Failed at point: "), virhePiste);
@@ -459,7 +496,7 @@ void naytaDigitaaliMittaus() {
 
 //   Hyväksytty!  U=4.91V
 //   Lev:3.3ms
-//                           (rivi 3 varattu: 0=Lähetä tulee vaiheessa 8)
+//   0=Lähetä                (vain hyväksytty ja ryhmätunnus asetettu)
 //   *=Uusi     #=Valikko
 // Hyväksyttyjen pulssien määrää ei näytetä: laite on validoinnin apuväline,
 // ei mittalaite. Määrä tulostuu edelleen sarjamonitoriin (digital.cpp).
@@ -480,13 +517,13 @@ void naytaDigitaaliPulssiTulos(bool ok, uint32_t keskiLeveysUs, bool onPulsseja,
   }
   riviR(lcd2, 1, rivi);
 
-  riviF(lcd2, 2, F(""));
+  lahetysRivi();
   riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
 //   Hyväksytty!  U=4.91V
 //   6.9:OK 7.4:EI 7.9:OK
-//                           (rivi 3 varattu: 0=Lähetä tulee vaiheessa 8)
+//   0=Lähetä                (vain hyväksytty ja ryhmätunnus asetettu)
 //   *=Uusi     #=Valikko
 void naytaDigitaaliKosteusTulos(bool ok, const bool taajuusOk[3], bool onPulsseja,
                                 uint16_t jannite_mV) {
@@ -502,7 +539,7 @@ void naytaDigitaaliKosteusTulos(bool ok, const bool taajuusOk[3], bool onPulssej
              taajuusOk[2] ? on : ei);
   riviR(lcd2, 1, rivi);
 
-  riviF(lcd2, 2, F(""));
+  lahetysRivi();
   riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 

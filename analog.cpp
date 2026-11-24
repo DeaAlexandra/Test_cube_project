@@ -31,6 +31,11 @@ const int TUULISUUNTA_MAARA = 5;
 SyottoTila syotto_tila    = EI_SYOTTOA;
 int        valittu_sensori = -1;
 
+// true, kun alanäytöllä on tietokantamittauksen tulos tai lähetysnäkymä:
+// vain silloin nappi 0 lähettää. Yksittäisen testin tuloksesta (1-5) ei
+// lähetetä vanhaa odottavaa sarjaa vahingossa.
+static bool dbTulosNaytolla = false;
+
 // ===== SETUP =====
 void analogSetup() {
   MBED_UART.begin(9600);
@@ -190,6 +195,7 @@ static void paluuPaavalikkoon() {
 //   '#' mittauksen aikana keskeyttää ja palaa päävalikkoon
 //   vika (oikosulku tms.) keskeyttää ja näyttää vikatilan
 static void suoritaTietokantamittaus(int sensori) {
+  dbTulosNaytolla = false;           // tosi vasta, kun tulos on näytöllä
   if (!ryhmaTunnusAsetettu()) {
     Serial.println(TXT("Ryhmatunnus puuttuu (C-valikko)", "Group ID missing (C menu)"));
     naytaRyhmatunnusPuuttuu();
@@ -234,7 +240,7 @@ static void suoritaTietokantamittaus(int sensori) {
   }
 
   dacNollaa();
-  db.valmis = true;
+  db_odottaa = DB_ANALOG;            // odottaa lähetystä (vain hyväksytty lähetetään)
   bool kaikkiOk = (db.hyvaksytyt == ANALOG_DB_PISTEET);
 
   Serial.print(TXT("Pisteet: ", "Points: "));
@@ -246,7 +252,8 @@ static void suoritaTietokantamittaus(int sensori) {
   else          ledPunainen();
 
   naytaTietokantaTulos(db.hyvaksytyt, ANALOG_DB_PISTEET, ensimmainenVirhe);
-  syotto_tila = NAYTTAA_TULOSTA;
+  syotto_tila     = NAYTTAA_TULOSTA;
+  dbTulosNaytolla = true;
 }
 
 void analogAloitaValinta() {
@@ -258,15 +265,18 @@ void analogAloitaValinta() {
 }
 
 void analogKasitteleValinta(char nappi) {
-  if (nappi == '#') { paluuPaavalikkoon(); return; }
+  if (nappi == '#') { dbTulosNaytolla = false; paluuPaavalikkoon(); return; }
 
   if (syotto_tila == NAYTTAA_TULOSTA) {
     if (nappi == '*') {
       // Vikailmoitus oli vain alanäytöllä, ylänäyttö on ennallaan.
       if (vikatila_aktiivinen) vikatilaNollaa();
       ledSammuta();
+      dbTulosNaytolla = false;
       syotto_tila = ODOTTAA_TESTIPISTETTA;
       naytaTestipisteValikko(valittu_sensori);
+    } else if (nappi == '0' && dbTulosNaytolla) {
+      tietokantaLaheta();            // 0=Lähetä / 0=Yritä uudelleen
     }
     return;
   }

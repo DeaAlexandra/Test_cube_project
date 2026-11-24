@@ -4,6 +4,8 @@
 #include "display.h"
 #include "lang.h"
 #include "adc.h"
+#include "ryhma.h"
+#include "tietokanta.h"
 #include <util/atomic.h>   // ATOMIC_BLOCK: koodilohko, jota keskeytys ei voi katkaista
 
 // =====================================================================
@@ -363,6 +365,20 @@ static void naytaTulos() {
     Serial.print(keskiMv); Serial.print(" mV  ");
     Serial.print(t.hyvaksytyt); Serial.print("/"); Serial.println(jakaja);
 
+    // Tietokantaan odottamaan lähetystä, jos ryhmätunnus on asetettu.
+    // Tallennus ennen näyttöä: tulosnäkymä näyttää 0=Lähetä tämän perusteella.
+    if (ryhmaTunnusAsetettu()) {
+      tietokantaTyhjenna();
+      DigiTietokantaTulos& d = digiDbTulos;
+      d.kanava     = mitattavaKanava;
+      d.ok         = ok;
+      d.jannite_mV = keskiMv;
+      d.leveys_us  = keskiLeveys;
+      d.hyvaksytyt = t.hyvaksytyt;
+      d.kaikki     = jakaja;
+      db_odottaa   = DB_DIGI;
+    }
+
     naytaDigitaaliPulssiTulos(ok, keskiLeveys, t.vastaanotetut > 0,
                               t.hyvaksytyt, jakaja, keskiMv);
   } else {
@@ -390,6 +406,20 @@ static void naytaTulos() {
       Serial.println(taajuusOk[i] ? "OK" : txt("VIRHE", "ERROR"));
     }
     uint16_t keskiMv = pulssitYht ? adcMillivolteiksi(huippuYht / pulssitYht) : 0;
+
+    if (ryhmaTunnusAsetettu()) {
+      tietokantaTyhjenna();
+      DigiTietokantaTulos& d = digiDbTulos;
+      d.kanava     = mitattavaKanava;
+      d.ok         = ok;
+      d.jannite_mV = keskiMv;
+      for (uint8_t i = 0; i < 3; i++) {
+        d.taajuus_hz[i] = tulokset[i].vastaanotetut;   // 1 s jakso -> Hz
+        d.taajuusOk[i]  = taajuusOk[i];
+      }
+      db_odottaa = DB_DIGI;
+    }
+
     naytaDigitaaliKosteusTulos(ok, taajuusOk, pulssitYht > 0, keskiMv);
   }
 
@@ -410,6 +440,7 @@ static void keskeytaVikaan() {
   if (vika == VIKA_EI_VIKAA) vika = VIKA_EI_SIGNAALIA;
   Serial.print(txt("Vika, lahdon taso ADC=", "Fault, output level ADC="));
   Serial.println(taso);
+  tietokantaTyhjenna();          // vanhaa tulosta ei lähetetä vikanäkymästä
   kasitteleVikatila(vika);       // ilmoitus näytöille ja punainen ledi
   digitaali_tila = DIG_TULOS;    // *=uusi, #=valikko
 }
