@@ -41,7 +41,12 @@ void naytaDigitaalinenValikko();           // alanäyttö: Valitse mittaus 1-4
 // ===== ANALOGINEN (A) =====
 void naytaAnalogYla(int sensori);          // ylänäyttö: Analoginen + mittaus + kaava (0 = ei valittu)
 void naytaAnalogiaValikko();               // alanäyttö: Valitse mittaus 1/2/3
-void naytaTestipisteValikko(int sensori);  // alanäyttö: testipisteet 1-5
+void naytaTestipisteValikko(int sensori);  // alanäyttö: testipisteet 1-5 + 0=Tietokantamittaus
+
+// Analoginen tietokantamittaus (alanäyttö)
+void naytaRyhmatunnusPuuttuu();
+void naytaTietokantamittausKaynnissa(uint8_t piste, uint8_t kaikki);
+void naytaTietokantaTulos(uint8_t hyvaksytyt, uint8_t kaikki, int8_t virhePiste);
 
 // ===== DIGITAALINEN MITTAUS (alanäyttö) =====
 void naytaDigitaaliMittaus();   // "Mittaus..." mittauksen ajaksi

@@ -1,6 +1,7 @@
 #include "ryhma.h"
 #include "display.h"
 #include "lang.h"
+#include "tietokanta.h"
 
 // ===== TILA =====
 // Tyhjä merkkijono = tunnusta ei ole asetettu.
@@ -62,6 +63,7 @@ static void kasitteleSyotto(char nappi) {
   // Kaikki 7 merkkiä: tallennetaan
   syotto[RYHMATUNNUS_PITUUS] = '\0';
   memcpy(ryhmatunnus, syotto, sizeof(ryhmatunnus));
+  tietokantaTyhjenna();       // uusi ryhmä: edellisen ryhmän tulokset pois
   Serial.print(TXT("Ryhmatunnus tallennettu: ", "Group ID saved: "));
   Serial.println(ryhmatunnus);
 
@@ -83,9 +85,10 @@ void ryhmaKasittele(char nappi) {
 
     case RYHMA_POISTO:
       if (nappi == '*') {                    // Kyllä
-        // Myöhemmin (vaihe 7-8): myös lähettämättömät tulokset poistetaan
-        // tässä, jotta ne eivät jää edellisen ryhmän tunnukselle.
+        // Myös lähettämättömät tulokset poistetaan, jotta ne eivät jää
+        // edellisen ryhmän tunnukselle.
         ryhmatunnus[0] = '\0';
+        tietokantaTyhjenna();
         Serial.println(TXT("Ryhmatunnus poistettu", "Group ID deleted"));
         ryhma_tila = RYHMA_VALIKKO;
         naytaRyhmavalikko();                 // R=------- ylänäytölle

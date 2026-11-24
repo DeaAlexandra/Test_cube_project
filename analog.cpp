@@ -4,6 +4,9 @@
 #include "display.h"
 #include "lang.h"
 #include "adc.h"
+#include "ryhma.h"
+#include "tietokanta.h"
+#include "ui.h"           // keypad: tietokantamittauksen keskeytys
 
 // ===== DAC-VAKIOARVOT (mV) =====
 int DAC_LAMPOTILA_OUTA   = 1200;
@@ -52,11 +55,27 @@ void dacNollaa() {
   MBED_UART.print("R\n");
 }
 
+// ===== ODOTUS, JONKA VOI KESKEYTTÄÄ =====
+// Odottaa 'ms' millisekuntia ja lukee samalla näppäimistöä. Palauttaa false,
+// jos käyttäjä painoi '#' (tietokantamittauksen keskeytys).
+static bool odotaKeskeytettavasti(unsigned long ms) {
+  unsigned long alku = millis();
+  while (millis() - alku < ms) {
+    if (keypad.getKey() == '#') return false;
+  }
+  return true;
+}
+
 // ===== MITTAUS: 1s vakautus + keskiarvo 16 lukemasta =====
 // Keskiarvo vähentää satunnaista kohinaa: 16 näytteen keskiarvossa kohina
 // pienenee noin neljäsosaan (neliöjuuri 16:sta).
-static int mittaaADC() {
-  delay(1000);
+// keskeytettava = true: vakautusaikana '#' keskeyttää, paluuarvo -1.
+static int mittaaADC(bool keskeytettava) {
+  if (keskeytettava) {
+    if (!odotaKeskeytettavasti(1000)) return -1;
+  } else {
+    delay(1000);
+  }
   long summa = 0;
   for (int k = 0; k < 16; k++) {
     summa += adcLueKerran(ADC_KANAVA_MITTAUS);
@@ -65,73 +84,93 @@ static int mittaaADC() {
   return (int)(summa / 16);
 }
 
-// ===== TESTI =====
-static void suoritaTesti(int sensori, int pisteIndeksi) {
-  const int* arvot;
-  int   dacB;
-  float kerroin;
-  int   toleranssi;
+// ===== MITTAUKSEN PARAMETRIT =====
+struct AnalogParametrit {
+  const int* arvot;       // testipisteiden Uin (mV)
+  int        dacB;        // kanava B (mV), tuulen suunnan 1.2 V
+  float      kerroin;     // Uout = kerroin * Uin - dacB
+  int        toleranssi;  // mV
+};
 
+static bool haeParametrit(int sensori, AnalogParametrit& p) {
   switch (sensori) {
-    case 1:
-      arvot      = LAMPOTILA_TESTIARVOT;
-      dacB       = 0;
-      kerroin    = 3.0;
-      toleranssi = TOL_LAMPOTILA;
-      Serial.println(txt("Lampotila (Vout=3*Vin):", "Temperature (Vout=3*Vin):"));
-      break;
-    case 2:
-      arvot      = VALO_TESTIARVOT;
-      dacB       = 0;
-      kerroin    = 2.0;
-      toleranssi = TOL_VALO;
-      Serial.println(txt("Valo (Vout=2*Vin):", "Light (Vout=2*Vin):"));
-      break;
-    case 3:
-      arvot      = TUULISUUNTA_TESTIARVOT;
-      dacB       = DAC_TUULISUUNTA_OUTB;
-      kerroin    = 1.0;
-      toleranssi = TOL_TUULISUUNTA;
-      Serial.println(txt("Tuulisuunta (Vout=Vin-1.2V):", "Wind dir (Vout=Vin-1.2V):"));
-      break;
-    default: return;
+    case 1: p = { LAMPOTILA_TESTIARVOT,   0,                    3.0, TOL_LAMPOTILA   }; return true;
+    case 2: p = { VALO_TESTIARVOT,        0,                    2.0, TOL_VALO        }; return true;
+    case 3: p = { TUULISUUNTA_TESTIARVOT, DAC_TUULISUUNTA_OUTB, 1.0, TOL_TUULISUUNTA }; return true;
+    default: return false;
   }
+}
 
-  int vinMV      = arvot[pisteIndeksi];
-  int odotettuMV = (int)(vinMV * kerroin) - dacB;
+// ===== YHDEN PISTEEN MITTAUS =====
+// Asettaa DAC:n, mittaa ja vertaa. Ei koske näyttöön, joten samaa funktiota
+// käyttävät sekä yksittäinen testi että tietokantamittaus.
+enum PisteTila { PISTE_MITATTU, PISTE_VIKA, PISTE_KESKEYTETTY };
 
-  dacSetBoth(vinMV, dacB);
+struct PisteTulos {
+  int        syottoMV;
+  int        odotettuMV;
+  int        mitattuMV;
+  bool       ok;
+  VikaTyyppi vika;
+};
 
-  int adcArvo = mittaaADC();
-  Serial.print("[ADC] "); Serial.println(adcArvo);
+static PisteTila mittaaPiste(int sensori, int pisteIndeksi, bool keskeytettava,
+                             PisteTulos& t) {
+  AnalogParametrit p;
+  if (!haeParametrit(sensori, p)) return PISTE_KESKEYTETTY;
 
-  VikaTyyppi vika = tarkistaAdcVika(adcArvo);
-  if (vika != VIKA_EI_VIKAA) {
+  t.syottoMV   = p.arvot[pisteIndeksi];
+  t.odotettuMV = (int)(t.syottoMV * p.kerroin) - p.dacB;
+  t.mitattuMV  = 0;
+  t.ok         = false;
+  t.vika       = VIKA_EI_VIKAA;
+
+  Serial.print(TXT("Piste ", "Point "));
+  Serial.print(pisteIndeksi + 1);
+  Serial.print(F(": Uin="));
+  Serial.print(t.syottoMV);
+  Serial.println(F(" mV"));
+
+  dacSetBoth(t.syottoMV, p.dacB);
+
+  int adcArvo = mittaaADC(keskeytettava);
+  if (adcArvo < 0) return PISTE_KESKEYTETTY;
+  Serial.print(F("[ADC] ")); Serial.println(adcArvo);
+
+  t.vika = tarkistaAdcVika(adcArvo);
+  if (t.vika != VIKA_EI_VIKAA) return PISTE_VIKA;
+
+  t.mitattuMV = (int)(adcArvo * (5000.0 / 1023.0));
+  t.ok        = abs(t.mitattuMV - t.odotettuMV) <= p.toleranssi;
+
+  Serial.print(TXT("Mitattu: ", "Measured: "));
+  Serial.print(t.mitattuMV);
+  Serial.print(TXT(" mV  Odotettu: ", " mV  Expected: "));
+  Serial.print(t.odotettuMV);
+  Serial.print(F(" mV  (+-"));
+  Serial.print(p.toleranssi);
+  Serial.print(F(" mV)  "));
+  Serial.println(t.ok ? F("OK") : TXT("VIRHE", "ERROR"));
+  return PISTE_MITATTU;
+}
+
+// ===== YKSITTÄINEN TESTI (napit 1-5) =====
+static void suoritaTesti(int sensori, int pisteIndeksi) {
+  PisteTulos t;
+  PisteTila  tila = mittaaPiste(sensori, pisteIndeksi, false, t);
+
+  if (tila == PISTE_VIKA) {
     dacNollaa();
-    kasitteleVikatila(vika);         // ilmoitus + punainen ledi, ei pysäytä
+    kasitteleVikatila(t.vika);       // ilmoitus + punainen ledi, ei pysäytä
     syotto_tila = NAYTTAA_TULOSTA;   // *=uusi testi, #=valikko
     return;
   }
+  if (tila != PISTE_MITATTU) return;
 
-  int  mitattuMV = (int)(adcArvo * (5000.0 / 1023.0));
-  bool ok        = abs(mitattuMV - odotettuMV) <= toleranssi;
+  if (t.ok) ledVihrea();
+  else      ledPunainen();
 
-  Serial.print(txt("Mitattu: ", "Measured: "));
-  Serial.print(mitattuMV / 1000.0, 3);
-  Serial.print(txt("V  Odotettu: ", "V  Expected: "));
-  Serial.print(odotettuMV / 1000.0, 3);
-  Serial.print("V  (+-");
-  Serial.print(toleranssi / 1000.0, 2);
-  Serial.println("V)");
-  Serial.println(ok ? "OK" : txt("VIRHE", "ERROR"));
-
-  if (ok) {
-    ledVihrea();
-  } else {
-    ledPunainen();
-  }
-
-  naytaAnalogiTulos(ok, mitattuMV, odotettuMV);
+  naytaAnalogiTulos(t.ok, t.mitattuMV, t.odotettuMV);
   syotto_tila = NAYTTAA_TULOSTA;
 }
 
@@ -143,6 +182,71 @@ static void paluuPaavalikkoon() {
   syotto_tila     = EI_SYOTTOA;
   valittu_sensori = -1;
   naytaPaavalikko();
+}
+
+// ===== TIETOKANTAMITTAUS (nappi 0) =====
+// Mittaa kaikki 5 testipistettä peräkkäin (noin 6 s) ja tallentaa tuloksen
+// työmuistiin odottamaan lähetystä. Vaatii ryhmätunnuksen.
+//   '#' mittauksen aikana keskeyttää ja palaa päävalikkoon
+//   vika (oikosulku tms.) keskeyttää ja näyttää vikatilan
+static void suoritaTietokantamittaus(int sensori) {
+  if (!ryhmaTunnusAsetettu()) {
+    Serial.println(TXT("Ryhmatunnus puuttuu (C-valikko)", "Group ID missing (C menu)"));
+    naytaRyhmatunnusPuuttuu();
+    syotto_tila = NAYTTAA_TULOSTA;   // *=takaisin testipisteisiin, #=valikko
+    return;
+  }
+
+  tietokantaTyhjenna();              // edellinen odottava tulos korvataan
+  ledSammuta();
+  Serial.println(TXT("TIETOKANTAMITTAUS", "DATABASE TEST"));
+
+  AnalogTietokantaTulos& db = analogDbTulos;
+  db.sensori = sensori;
+  int8_t ensimmainenVirhe = -1;      // 1-5, -1 = ei virheitä
+
+  for (uint8_t i = 0; i < ANALOG_DB_PISTEET; i++) {
+    naytaTietokantamittausKaynnissa(i + 1, ANALOG_DB_PISTEET);
+
+    PisteTulos t;
+    PisteTila  tila = mittaaPiste(sensori, i, true, t);
+
+    if (tila == PISTE_KESKEYTETTY) {
+      Serial.println(TXT("Keskeytetty", "Aborted"));
+      tietokantaTyhjenna();
+      paluuPaavalikkoon();
+      return;
+    }
+    if (tila == PISTE_VIKA) {
+      tietokantaTyhjenna();          // vajaata tulosta ei lähetetä
+      dacNollaa();
+      kasitteleVikatila(t.vika);
+      syotto_tila = NAYTTAA_TULOSTA;
+      return;
+    }
+
+    db.syotto_mV[i]   = t.syottoMV;
+    db.odotettu_mV[i] = t.odotettuMV;
+    db.mitattu_mV[i]  = t.mitattuMV;
+    db.ok[i]          = t.ok;
+    if (t.ok) db.hyvaksytyt++;
+    else if (ensimmainenVirhe < 0) ensimmainenVirhe = i + 1;
+  }
+
+  dacNollaa();
+  db.valmis = true;
+  bool kaikkiOk = (db.hyvaksytyt == ANALOG_DB_PISTEET);
+
+  Serial.print(TXT("Pisteet: ", "Points: "));
+  Serial.print(db.hyvaksytyt);
+  Serial.print(F("/"));
+  Serial.println(ANALOG_DB_PISTEET);
+
+  if (kaikkiOk) ledVihrea();
+  else          ledPunainen();
+
+  naytaTietokantaTulos(db.hyvaksytyt, ANALOG_DB_PISTEET, ensimmainenVirhe);
+  syotto_tila = NAYTTAA_TULOSTA;
 }
 
 void analogAloitaValinta() {
@@ -160,6 +264,7 @@ void analogKasitteleValinta(char nappi) {
     if (nappi == '*') {
       // Vikailmoitus oli vain alanäytöllä, ylänäyttö on ennallaan.
       if (vikatila_aktiivinen) vikatilaNollaa();
+      ledSammuta();
       syotto_tila = ODOTTAA_TESTIPISTETTA;
       naytaTestipisteValikko(valittu_sensori);
     }
@@ -174,8 +279,9 @@ void analogKasitteleValinta(char nappi) {
     return;
   }
 
-  if (syotto_tila == ODOTTAA_TESTIPISTETTA && nappi >= '1' && nappi <= '5') {
-    suoritaTesti(valittu_sensori, nappi - '1');
+  if (syotto_tila == ODOTTAA_TESTIPISTETTA) {
+    if (nappi >= '1' && nappi <= '5') suoritaTesti(valittu_sensori, nappi - '1');
+    else if (nappi == '0')            suoritaTietokantamittaus(valittu_sensori);
   }
 }
 

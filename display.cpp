@@ -375,7 +375,59 @@ void naytaTestipisteValikko(int sensori) {
   testipiste(vasen, sizeof(vasen), 5, arvot[4]);
   riviR(lcd2, 2, vasen);
 
+  riviF(lcd2, 3, TXT("0=Tietokantamittaus", "0=Database test"));
+}
+
+// ===== ANALOGINEN: TIETOKANTAMITTAUS (alanäyttö) =====
+//   Ryhmätunnus puuttuu
+//   Aseta tunnus
+//   C-valikosta
+// (* palaa testipisteisiin, # päävalikkoon)
+void naytaRyhmatunnusPuuttuu() {
+  riviF(lcd2, 0, TXT("Ryhm" LCD_AE "tunnus puuttuu", "Group ID missing"));
+  riviF(lcd2, 1, TXT("Aseta tunnus", "Set group ID"));
+  riviF(lcd2, 2, TXT("C-valikosta", "in C menu"));
   riviF(lcd2, 3, F(""));
+}
+
+//   Tietokantamittaus
+//   Piste 2/5
+//   Odota...
+//   #=Keskeytä
+void naytaTietokantamittausKaynnissa(uint8_t piste, uint8_t kaikki) {
+  char rivi[21];
+  riviF(lcd2, 0, TXT("Tietokantamittaus", "Database test"));
+  snprintf_P(rivi, sizeof(rivi), PSTR("%S%u/%u"), TXT("Piste ", "Point "), piste, kaikki);
+  riviR(lcd2, 1, rivi);
+  riviF(lcd2, 2, TXT("Odota...", "Wait..."));
+  riviF(lcd2, 3, TXT("#=Keskeyt" LCD_AE, "#=Abort"));
+}
+
+//   Hyväksytty!                 Virhe!
+//   Pisteet: 5/5                Pisteet: 3/5
+//   (vaihe 8: 0=Lähetä)         Virhe pisteessä: 2
+//   *=Uusi     #=Valikko        *=Uusi     #=Valikko
+// virhePiste = ensimmäinen hylätty piste (1-5), -1 jos kaikki hyväksytty.
+void naytaTietokantaTulos(uint8_t hyvaksytyt, uint8_t kaikki, int8_t virhePiste) {
+  char rivi[21];
+  bool ok = (hyvaksytyt == kaikki);
+
+  riviF(lcd2, 0, ok ? TXT("Hyv" LCD_AE "ksytty!", "Passed!")
+                    : TXT("Virhe!", "Failed!"));
+
+  snprintf_P(rivi, sizeof(rivi), PSTR("%S%u/%u"), TXT("Pisteet: ", "Points: "),
+             hyvaksytyt, kaikki);
+  riviR(lcd2, 1, rivi);
+
+  if (ok) {
+    riviF(lcd2, 2, F(""));
+  } else {
+    snprintf_P(rivi, sizeof(rivi), PSTR("%S%d"),
+               TXT("Virhe pisteess" LCD_AE ": ", "Failed at point: "), virhePiste);
+    riviR(lcd2, 2, rivi);
+  }
+
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
 // ===== DIGITAALINEN: MITTAUS JA TULOS (alanäyttö) =====
