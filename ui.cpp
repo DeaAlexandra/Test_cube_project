@@ -1,6 +1,7 @@
 #include "ui.h"
 #include "analog.h"
 #include "asetukset.h"
+#include "ryhma.h"
 #include "digital.h"
 #include "display.h"
 #include "errormode.h"
@@ -87,6 +88,12 @@ void uiKasitteleNappi() {
     return;
   }
 
+  // ----- Ryhmävalikko -----
+  if (ryhmaAktiivinen()) {
+    ryhmaKasittele(nappi);
+    return;
+  }
+
   // ----- Analoginen mittaus -----
   if (analogSyottoAktiivinen()) {
     analogKasitteleValinta(nappi);
@@ -136,7 +143,7 @@ void uiKasitteleNappi() {
     asetuksetAvaa();       // 1=Laitteen tiedot, 2=Kieli, 3=Verkko
 
   } else if (nappi == 'C') {
-    // Ryhmävalikko tulee vaiheessa 3. Toistaiseksi C ei tee mitään.
+    ryhmaAvaa();           // 1=Syötä tunnus, 2=Poista tunnus
 
   } else if (nappi == 'D') {
     digitalAvaaValinta();

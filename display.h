@@ -20,6 +20,14 @@ void displaySetup();   // näytöt päälle + käynnistysnäkymä
 void naytaKaynnistys();   // TEST CUBE / Käynnistyy... / Versio, alanäyttö tyhjä
 void naytaPaavalikko();   // A/D/B/C + ryhmätunnus, alanäyttö tyhjä
 
+// ===== RYHMÄVALIKKO (C) =====
+void naytaRyhmavalikko();                                   // ylänäyttö: 1/2 + #=Valikko
+void naytaTunnusSyotto(const char* syotetty, uint8_t pituus); // alanäyttö: syöttö käynnissä
+void naytaTunnusTallennettu();                              // alanäyttö: tallennettu + tunnus
+void naytaTunnusPoistoVahvistus();                          // alanäyttö: *=Kyllä #=Ei
+void naytaTunnusPoistettu();                                // alanäyttö: poistettu!
+void naytaEiTunnusta();                                     // alanäyttö: ei poistettavaa
+
 // ===== ASETUKSET (B) =====
 void naytaAsetukset();             // ylänäyttö: 1/2/3 + #=Valikko, alanäyttö tyhjä
 void naytaLaitteenTiedot();        // alanäyttö: versio ja päivityspäivä

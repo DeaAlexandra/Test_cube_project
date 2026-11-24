@@ -92,6 +92,17 @@ static void riviF(LiquidCrystal_I2C& lcd, uint8_t rivi,
   lcd.print(buf);
 }
 
+// Sama RAM-tekstille (esim. syötetty tunnus), tasattuna vasemmalle.
+static void riviR(LiquidCrystal_I2C& lcd, uint8_t rivi, const char* teksti) {
+  char buf[21];
+  memset(buf, ' ', 20);
+  buf[20] = '\0';
+  size_t l = strlen(teksti); if (l > 20) l = 20;
+  memcpy(buf, teksti, l);
+  lcd.setCursor(0, rivi);
+  lcd.print(buf);
+}
+
 // ===== KÄYNNISTYSNÄKYMÄ =====
 //   TEST CUBE
 //
@@ -123,6 +134,81 @@ void naytaPaavalikko() {
   riviF(lcd1, 2, TXT("C=Ryhm" LCD_AE "valikko", "C=Group menu"));
   riviF(lcd1, 3, TXT("D=Digitaal.", "D=Digital"));
   lcd2.clear();
+}
+
+// ===== RYHMÄVALIKKO =====
+//   Ryhmä      R=-------
+//   1=Syötä tunnus
+//   2=Poista tunnus
+//              #=Valikko
+// Ylänäyttö pysyy koko Ryhmävalikon ajan, alanäyttö vaihtuu.
+void naytaRyhmavalikko() {
+  char tunnus[10];
+  ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
+
+  riviF(lcd1, 0, TXT("Ryhm" LCD_AE, "Group"), tunnus);
+  riviF(lcd1, 1, TXT("1=Sy" LCD_OE "t" LCD_AE " tunnus", "1=Enter ID"));
+  riviF(lcd1, 2, TXT("2=Poista tunnus", "2=Delete ID"));
+  riviF(lcd1, 3, TXT("           #=Valikko",     // oikeaan reunaan
+                     "              #=Menu"));
+  lcd2.clear();
+}
+
+//   Syötä ryhmätunnus
+//   Vuosikurssi: 0-9      (vaihe: 2 numeroa, sitten luokka, sitten 4 numeroa)
+//   26A12_
+//   *=Poista merkki
+// 'syotetty' = tähän asti syötetyt merkit, 'pituus' = niiden määrä.
+void naytaTunnusSyotto(const char* syotetty, uint8_t pituus) {
+  riviF(lcd2, 0, TXT("Sy" LCD_OE "t" LCD_AE " ryhm" LCD_AE "tunnus", "Enter group ID"));
+
+  if (pituus < 2)       riviF(lcd2, 1, TXT("Vuosikurssi: 0-9", "Year: 0-9"));
+  else if (pituus == 2) riviF(lcd2, 1, TXT("Luokka: A-D", "Class: A-D"));
+  else                  riviF(lcd2, 1, TXT("Numero: 0-9", "Number: 0-9"));
+
+  char buf[RYHMATUNNUS_PITUUS + 2];          // merkit + kursori '_' + loppumerkki
+  memcpy(buf, syotetty, pituus);
+  buf[pituus]     = '_';
+  buf[pituus + 1] = '\0';
+  riviR(lcd2, 2, buf);
+
+  riviF(lcd2, 3, TXT("*=Poista merkki", "*=Delete char"));
+}
+
+//   Tunnus tallennettu
+//   26A1234
+void naytaTunnusTallennettu() {
+  riviF(lcd2, 0, TXT("Tunnus tallennettu", "ID saved"));
+  riviR(lcd2, 1, ryhmatunnus);
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   Poista tunnus
+//   26A1234
+//
+//   *=Kyllä #=Ei
+void naytaTunnusPoistoVahvistus() {
+  riviF(lcd2, 0, TXT("Poista tunnus", "Delete group ID"));
+  riviR(lcd2, 1, ryhmatunnus);
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, TXT("*=Kyll" LCD_AE " #=Ei", "*=Yes   #=No"));
+}
+
+//   Tunnus poistettu!
+void naytaTunnusPoistettu() {
+  riviF(lcd2, 0, TXT("Tunnus poistettu!", "Group ID deleted!"));
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   Ei ryhmätunnusta      (2=Poista, kun tunnusta ei ole)
+void naytaEiTunnusta() {
+  riviF(lcd2, 0, TXT("Ei ryhm" LCD_AE "tunnusta", "No group ID"));
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
 }
 
 // ===== ASETUKSET =====
