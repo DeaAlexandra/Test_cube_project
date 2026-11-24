@@ -142,7 +142,7 @@ static void paluuPaavalikkoon() {
   ledSammuta();
   syotto_tila     = EI_SYOTTOA;
   valittu_sensori = -1;
-  naytaTervetuloviesti();
+  naytaPaavalikko();
 }
 
 void analogAloitaValinta() {
@@ -161,7 +161,7 @@ void analogKasitteleValinta(char nappi) {
       // Vikailmoitus peitti myös ylänäytön -> palautetaan se ensin.
       if (vikatila_aktiivinen) {
         vikatilaNollaa();
-        naytaTervetuloviesti();
+        naytaPaavalikko();
       }
       syotto_tila = ODOTTAA_TESTIPISTETTA;
       naytaTestipisteValikko(valittu_sensori);

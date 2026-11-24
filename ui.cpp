@@ -69,7 +69,7 @@ void uiResetoi() {
   vikatilaNollaa();
   valittu_kanava  = -1;
   Serial.println(txt("NOLLATTU", "RESET"));
-  naytaTervetuloviesti();
+  naytaPaavalikko();
 }
 
 
@@ -126,9 +126,14 @@ void uiKasitteleNappi() {
     naytaAnalogiaValikko();
 
   } else if (nappi == 'B') {
+    // VÄLIAIKAINEN: B vaihtaa vielä suoraan kielen. Vaiheessa 2 tästä tulee
+    // Asetukset-valikko (1=Laitteen tiedot, 2=Kieli, 3=Verkko).
     kieli_englanti = !kieli_englanti;
-    Serial.println(kieli_englanti ? "Language: English" : "Kieli: Suomi");
-    naytaTervetuloviesti();
+    Serial.println(kieli_englanti ? F("Language: English") : F("Kieli: Suomi"));
+    naytaPaavalikko();
+
+  } else if (nappi == 'C') {
+    // Ryhmävalikko tulee vaiheessa 3. Toistaiseksi C ei tee mitään.
 
   } else if (nappi == 'D') {
     digitalAvaaValinta();

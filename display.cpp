@@ -2,6 +2,7 @@
 #include "analog.h"
 #include "digital.h"
 #include "lang.h"
+#include "ryhma.h"
 
 // ===== NÄYTÖT =====
 LiquidCrystal_I2C lcd1(0x23, 20, 4);
@@ -70,28 +71,57 @@ void displaySetup() {
   lcd2.createChar(2, merkkiIsoA);
   lcd2.createChar(3, merkkiIsoO);
 
-  naytaTervetuloviesti();
+  naytaKaynnistys();
 }
 
-// ===== YLÄNÄYTTÖ (pysyvä otsikko + tila) =====
-void naytaTervetuloviesti() {
-  lcd1.clear();
+// ===== RIVIN KIRJOITUS =====
+// Kirjoittaa koko 20 merkin rivin: 'vasen' (flash-teksti, TXT/F) alkuun ja
+// 'oikea' (RAM-teksti, esim. "R=26A1234") oikeaan reunaan. Väli täytetään
+// välilyönneillä, joten vanhaa tekstiä ei jää näkyviin eikä näyttöä tarvitse
+// tyhjentää clear():lla (ei välkettä).
+static void riviF(LiquidCrystal_I2C& lcd, uint8_t rivi,
+                  const __FlashStringHelper* vasen, const char* oikea = "") {
+  char buf[21];
+  memset(buf, ' ', 20);
+  buf[20] = '\0';
+  PGM_P p = reinterpret_cast<PGM_P>(vasen);
+  memcpy_P(buf, p, strnlen_P(p, 20));
+  size_t lo = strlen(oikea); if (lo > 20) lo = 20;
+  memcpy(buf + 20 - lo, oikea, lo);
+  lcd.setCursor(0, rivi);
+  lcd.print(buf);
+}
+
+// ===== KÄYNNISTYSNÄKYMÄ =====
+//   TEST CUBE
+//
+//   Käynnistyy...
+//   Versio 2.0
+// Näkyy setupin ajan (BOB:n käynnistysviive 2 s). Kieli on käynnistyksessä
+// aina suomi, koska kielivalinta on vain työmuistissa.
+void naytaKaynnistys() {
+  riviF(lcd1, 0, F("TEST CUBE"));
+  riviF(lcd1, 1, F(""));
+  riviF(lcd1, 2, TXT("K" LCD_AE "ynnistyy...", "Starting..."));
+  riviF(lcd1, 3, TXT("Versio " LAITE_VERSIO, "Version " LAITE_VERSIO));
   lcd2.clear();
-  lcd1.setCursor(0, 0);
-  if (kieli_englanti) {
-    lcd1.print("WEATHER STN TEST");
-  } else {
-    lcd1.print("S");
-    lcd1.write(2);          // Ä
-    lcd1.write(2);          // Ä
-    lcd1.print("ASEMA TESTAUS");
-  }
-  lcd1.setCursor(0, 1);
-  lcd1.print(txt("Valmis", "Ready"));
-  lcd1.setCursor(0, 2);
-  lcd1.print(txt("A=analoginen", "A=analog"));
-  lcd1.setCursor(0, 3);
-  lcd1.print(txt("D=digitaalinen", "D=digital"));
+}
+
+// ===== PÄÄVALIKKO =====
+//   A=Analog.  R=-------      (R=26A1234 kun ryhmätunnus on asetettu)
+//   D=Digitaal.
+//   B=Asetukset
+//   C=Ryhmävalikko
+// Alanäyttö tyhjä.
+void naytaPaavalikko() {
+  char tunnus[10];
+  ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
+
+  riviF(lcd1, 0, TXT("A=Analog.", "A=Analog"), tunnus);
+  riviF(lcd1, 1, TXT("D=Digitaal.", "D=Digital"));
+  riviF(lcd1, 2, TXT("B=Asetukset", "B=Settings"));
+  riviF(lcd1, 3, TXT("C=Ryhm" LCD_AE "valikko", "C=Group menu"));
+  lcd2.clear();
 }
 
 void naytaKanava(int kanava) {
