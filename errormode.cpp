@@ -36,22 +36,24 @@ void kasitteleVikatila(VikaTyyppi vika) {
 
   vikatila_aktiivinen = true;
 
-  const char* viesti;
+  // Vian tyyppi näytön toiselle riville. Tekstit ovat flashissa (TXT).
+  // Jos tyyppiä ei tunneta, näytetään yleinen TESTI KESKEYTETTY.
+  const __FlashStringHelper* viesti;
   switch (vika) {
     case VIKA_OIKOSULKU:
-      viesti = txt("OIKOSULKU", "SHORT CIRCUIT");
+      viesti = TXT("OIKOSULKU", "SHORT CIRCUIT");
       break;
     case VIKA_AVOIN_PIIRI:
-      viesti = txt("AVOIN PIIRI", "OPEN CIRCUIT");
+      viesti = TXT("AVOIN PIIRI", "OPEN CIRCUIT");
       break;
     case VIKA_RAIKEA_POIKKEAMA:
-      viesti = txt("POIKKEAMA", "DEVIATION");
+      viesti = TXT("POIKKEAMA", "DEVIATION");
       break;
     case VIKA_EI_SIGNAALIA:
-      viesti = txt("EI SIGNAALIA", "NO SIGNAL");
+      viesti = TXT("EI SIGNAALIA", "NO SIGNAL");
       break;
     default:
-      viesti = txt("TUNTEMATON", "UNKNOWN");
+      viesti = TXT("TESTI KESKEYTETTY", "TEST ABORTED");
       break;
   }
 

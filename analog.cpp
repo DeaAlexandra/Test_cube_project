@@ -158,11 +158,8 @@ void analogKasitteleValinta(char nappi) {
 
   if (syotto_tila == NAYTTAA_TULOSTA) {
     if (nappi == '*') {
-      // Vikailmoitus peitti myös ylänäytön -> palautetaan se ensin.
-      if (vikatila_aktiivinen) {
-        vikatilaNollaa();
-        naytaAnalogYla(valittu_sensori);
-      }
+      // Vikailmoitus oli vain alanäytöllä, ylänäyttö on ennallaan.
+      if (vikatila_aktiivinen) vikatilaNollaa();
       syotto_tila = ODOTTAA_TESTIPISTETTA;
       naytaTestipisteValikko(valittu_sensori);
     }

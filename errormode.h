@@ -26,7 +26,7 @@ VikaTyyppi tarkistaAdcVika(int adcArvo);
 // Tarkistaa onko mitattu arvo räikeästi pois toleranssista (mV)
 VikaTyyppi tarkistaPoikkeamaVika(int mitattuMV, int odotettuMV, int toleranssiMV);
 
-// Näyttää vikailmoituksen molemmilla näytöillä ja sytyttää punaisen ledin.
+// Näyttää vikailmoituksen alanäytöllä ja sytyttää punaisen ledin.
 // Ei pysäytä ohjelmaa: kutsuja keskeyttää mittauksen ja käyttäjä valitsee
 // *=uusi mittaus tai #=päävalikko.
 void kasitteleVikatila(VikaTyyppi vika);

@@ -122,8 +122,7 @@ void uiKasitteleNappi() {
 
     case DIG_TULOS:              // tulos tai vikailmoitus näytöllä
       if (nappi == '*') {
-        vikatilaNollaa();
-        naytaDigitaaliYla(valittu_kanava);        // ylänäyttö takaisin (vika peitti sen)
+        vikatilaNollaa();                         // ylänäyttö on ennallaan
         digitalAloitaMittaus(valittu_kanava);     // sama kanava uudelleen
       } else if (nappi == '#') {
         uiResetoi();

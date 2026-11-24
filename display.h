@@ -58,4 +58,4 @@ void naytaDigitaaliKosteusTulos(bool ok, const bool taajuusOk[3], bool onPulssej
 void naytaAnalogiTulos(bool ok, int mitattuMV, int odotettuMV);
 
 // ===== VIKATILA =====
-void naytaVikatila(const char* viesti);  // Näyttää vikailmoituksen molemmilla näytöillä
+void naytaVikatila(const __FlashStringHelper* viesti);  // vikailmoitus alanäytölle, ylänäyttö ei muutu

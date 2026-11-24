@@ -484,25 +484,15 @@ void naytaAnalogiTulos(bool ok, int mitattuMV, int odotettuMV) {
   riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
-// ===== VIKATILA =====
-void naytaVikatila(const char* viesti) {
-  lcd1.clear();
-  lcd1.setCursor(0, 0);
-  lcd1.print(txt("!!! VIKATILA !!!", "!!! FAULT !!!"));
-  lcd1.setCursor(0, 1);
-  lcd1.print(viesti);
-  lcd1.setCursor(0, 2);
-  lcd1.print(txt("Tarkista piiri", "Check circuit"));
-  lcd1.setCursor(0, 3);
-  lcd1.print(txt("*=uusi  #=valikko", "*=retry #=menu"));
-
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("!!! VIKATILA !!!", "!!! FAULT !!!"));
-  lcd2.setCursor(0, 1);
-  lcd2.print(viesti);
-  lcd2.setCursor(0, 2);
-  lcd2.print(txt("Testi keskeytetty", "Test aborted"));
-  lcd2.setCursor(0, 3);
-  lcd2.print(txt("*=uusi  #=valikko", "*=retry #=menu"));
+// ===== VIKATILA (vain alanäyttö) =====
+//   !!!VIKATILA!!!
+//   OIKOSULKU               (vian tyyppi, tai TESTI KESKEYTETTY)
+//   Tarkista piiri
+//   *=Uusi     #=Valikko
+// Ylänäyttö ei muutu: siinä näkyy edelleen, mikä mittaus oli käynnissä.
+void naytaVikatila(const __FlashStringHelper* viesti) {
+  riviF(lcd2, 0, TXT("!!!VIKATILA!!!", "!!!FAULT!!!"));
+  riviF(lcd2, 1, viesti);
+  riviF(lcd2, 2, TXT("Tarkista piiri", "Check circuit"));
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
