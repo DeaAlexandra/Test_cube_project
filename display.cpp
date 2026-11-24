@@ -325,56 +325,84 @@ void naytaDigitaalinenValikko() {
   }
 }
 
-void naytaAnalogiaValikko() {
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("ANALOGINEN:", "ANALOG:"));
-  if (kieli_englanti) {
-    lcd2.setCursor(0, 1);
-    lcd2.print("1=temperature");
-    lcd2.setCursor(0, 2);
-    lcd2.print("2=light");
-    lcd2.setCursor(0, 3);
-    lcd2.print("3=wind direction");
-  } else {
-    lcd2.setCursor(0, 1);
-    lcd2.print("1=l");
-    lcd2.write(0);          // ä
-    lcd2.print("mp");
-    lcd2.write(1);          // ö
-    lcd2.print("tila");
-    lcd2.setCursor(0, 2);
-    lcd2.print("2=valo");
-    lcd2.setCursor(0, 3);
-    lcd2.print("3=tuulen suunta");
+// ===== ANALOGINEN: YLÄNÄYTTÖ =====
+//   Analoginen R=-------
+//   Tuulen suunta           (tyhjä, kun mittausta ei ole vielä valittu)
+//   Uout=Uin-1.2V           (tyhjä, kun mittausta ei ole vielä valittu)
+//   #=Valikko
+// sensori: 0 = ei valittu, 1 = lämpötila, 2 = valo, 3 = tuulen suunta.
+// Kaavassa '*' tarkoittaa kertomerkkiä (näytössä ei ole ×-merkkiä).
+void naytaAnalogYla(int sensori) {
+  char tunnus[10];
+  ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
+
+  riviF(lcd1, 0, TXT("Analoginen", "Analog"), tunnus);
+  switch (sensori) {
+    case 1:
+      riviF(lcd1, 1, TXT("L" LCD_AE "mp" LCD_OE "tila", "Temperature"));
+      riviF(lcd1, 2, F("Uout=3*Uin"));
+      break;
+    case 2:
+      riviF(lcd1, 1, TXT("Valo", "Light"));
+      riviF(lcd1, 2, F("Uout=2*Uin"));
+      break;
+    case 3:
+      riviF(lcd1, 1, TXT("Tuulen suunta", "Wind direction"));
+      riviF(lcd1, 2, F("Uout=Uin-1.2V"));
+      break;
+    default:
+      riviF(lcd1, 1, F(""));
+      riviF(lcd1, 2, F(""));
+      break;
   }
+  riviF(lcd1, 3, TXT("#=Valikko", "#=Menu"));
 }
 
-// ===== TESTIPISTE-VALIKKO =====
-void naytaTestipisteValikko(int sensori) {
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("Valitse arvo:", "Select value:"));
+// ===== ANALOGINEN: MITTAUKSEN VALINTA (alanäyttö) =====
+//   Valitse mittaus
+//   1=Lämpötila
+//   2=Valo
+//   3=Tuulen suunta
+void naytaAnalogiaValikko() {
+  riviF(lcd2, 0, TXT("Valitse mittaus", "Select measurement"));
+  riviF(lcd2, 1, TXT("1=L" LCD_AE "mp" LCD_OE "tila", "1=Temperature"));
+  riviF(lcd2, 2, TXT("2=Valo", "2=Light"));
+  riviF(lcd2, 3, TXT("3=Tuulen suunta", "3=Wind direction"));
+}
 
+// ===== ANALOGINEN: TESTIPISTEET (alanäyttö) =====
+//   1=1.700V  2=2.200V
+//   3=2.700V  4=3.200V
+//   5=3.900V
+//   (rivi 4 varattu: 0=Tietokantamittaus tulee vaiheessa 7)
+// Arvot ovat syöttöjännitteitä Uin (DAC), samat kuin analog.cpp:n taulukoissa.
+static void testipiste(char* buf, size_t koko, uint8_t numero, int mV) {
+  snprintf_P(buf, koko, PSTR("%u=%u.%03uV"), numero, mV / 1000, mV % 1000);
+}
+
+void naytaTestipisteValikko(int sensori) {
   const int* arvot = nullptr;
   if      (sensori == 1) arvot = LAMPOTILA_TESTIARVOT;
   else if (sensori == 2) arvot = VALO_TESTIARVOT;
   else if (sensori == 3) arvot = TUULISUUNTA_TESTIARVOT;
   if (!arvot) return;
 
-  // Rivi 1: pisteet 1 ja 2
-  // Rivi 2: pisteet 3 ja 4
-  // Rivi 3: piste 5
-  char buf[21];
-  snprintf(buf, sizeof(buf), "1.%dmV 2.%dmV", arvot[0], arvot[1]);
-  lcd2.setCursor(0, 1);
-  lcd2.print(buf);
-  snprintf(buf, sizeof(buf), "3.%dmV 4.%dmV", arvot[2], arvot[3]);
-  lcd2.setCursor(0, 2);
-  lcd2.print(buf);
-  snprintf(buf, sizeof(buf), "5.%dmV", arvot[4]);
-  lcd2.setCursor(0, 3);
-  lcd2.print(buf);
+  char vasen[11], oikea[11], rivi[21];
+
+  testipiste(vasen, sizeof(vasen), 1, arvot[0]);
+  testipiste(oikea, sizeof(oikea), 2, arvot[1]);
+  snprintf_P(rivi, sizeof(rivi), PSTR("%-10s%s"), vasen, oikea);
+  riviR(lcd2, 0, rivi);
+
+  testipiste(vasen, sizeof(vasen), 3, arvot[2]);
+  testipiste(oikea, sizeof(oikea), 4, arvot[3]);
+  snprintf_P(rivi, sizeof(rivi), PSTR("%-10s%s"), vasen, oikea);
+  riviR(lcd2, 1, rivi);
+
+  testipiste(vasen, sizeof(vasen), 5, arvot[4]);
+  riviR(lcd2, 2, vasen);
+
+  riviF(lcd2, 3, F(""));
 }
 
 // ===== ALANÄYTTÖ - DIGITAALINEN MITTAUS =====
@@ -472,21 +500,33 @@ void naytaDigitaaliKosteusTulos(bool ok, const bool taajuusOk[3], bool onPulssej
 }
 
 // ===== ANALOGINEN TESTITULOS =====
+//   Hyväksytty!             (tai Virhe!)
+//   Mitattu:  1.523V
+//   Odotettu: 1.500V
+//   *=Uusi     #=Valikko
+// Jännite muotoon "1.523V" (mV kokonaislukuna, ei liukulukuja).
+static void janniteKolmellaDesimaalilla(char* buf, size_t koko, int mV) {
+  if (mV < 0) mV = 0;
+  snprintf_P(buf, koko, PSTR("%u.%03uV"), mV / 1000, mV % 1000);
+}
+
 void naytaAnalogiTulos(bool ok, int mitattuMV, int odotettuMV) {
-  lcd2.clear();
-  delay(5);
-  lcd2.setCursor(0, 0);
-  lcd2.print(ok ? txt("OK!", "OK!") : txt("VIRHE!", "ERROR!"));
-  lcd2.setCursor(0, 1);
-  lcd2.print(txt("Mitattu:  ", "Measured: "));
-  lcd2.print(mitattuMV / 1000.0, 3);
-  lcd2.print("V");
-  lcd2.setCursor(0, 2);
-  lcd2.print(txt("Odotettu: ", "Expected: "));
-  lcd2.print(odotettuMV / 1000.0, 3);
-  lcd2.print("V");
-  lcd2.setCursor(0, 3);
-  lcd2.print(txt("*=uusi  #=valikko", "*=retry #=menu"));
+  char arvo[10], rivi[21];
+
+  riviF(lcd2, 0, ok ? TXT("Hyv" LCD_AE "ksytty!", "Passed!")
+                    : TXT("Virhe!", "Failed!"));
+
+  janniteKolmellaDesimaalilla(arvo, sizeof(arvo), mitattuMV);
+  snprintf_P(rivi, sizeof(rivi), PSTR("%S%s"),
+             TXT("Mitattu:  ", "Measured: "), arvo);
+  riviR(lcd2, 1, rivi);
+
+  janniteKolmellaDesimaalilla(arvo, sizeof(arvo), odotettuMV);
+  snprintf_P(rivi, sizeof(rivi), PSTR("%S%s"),
+             TXT("Odotettu: ", "Expected: "), arvo);
+  riviR(lcd2, 2, rivi);
+
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
 // ===== VIKATILA =====

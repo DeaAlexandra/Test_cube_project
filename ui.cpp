@@ -137,6 +137,7 @@ void uiKasitteleNappi() {
   // ----- Päävalikko -----
   if (nappi == 'A') {
     analogAloitaValinta();
+    naytaAnalogYla(0);       // mittausta ei vielä valittu
     naytaAnalogiaValikko();
 
   } else if (nappi == 'B') {
