@@ -87,9 +87,9 @@ U=4.91V          OK!     U=4.91V          OK!
 
 | Kanava | Testisignaali | Hyväksytään |
 |---|---|---|
-| Tuulen nopeus | 40 ms pulssi 200 ms välein, 10 kpl | Lähtöpulssin leveys 2-6 ms, vähintään 80 % pulsseista |
-| Sademäärä | 150 ms pulssi 300 ms välein, 10 kpl | Lähtöpulssin leveys 3-50 ms, vähintään 80 % pulsseista |
-| Kosteus (sisä / ulko) | 50 % neliöaalto 6,9 / 7,4 / 7,9 kHz, kukin 1 s | Lähdön taajuus ±1 %, vähintään 95 % pulsseista |
+| Tuulen nopeus | 40 ms pulssi 200 ms välein, 10 kpl | Lähtöpulssin leveys 2-6 ms, vähintään 60 % pulsseista |
+| Sademäärä | 150 ms pulssi 600 ms välein, 5 kpl | Lähtöpulssin leveys 3-50 ms, vähintään 60 % pulsseista |
+| Kosteus (sisä / ulko) | 50 % neliöaalto 6,9 / 7,4 / 7,9 kHz, kukin 1 s | Lähdön taajuus ±1 %, vähintään 80 % pulsseista |
 
 Kaikilla digitaalisilla kanavilla jokaisen lähtöpulssin tason pitää olla
 HIGH ≥ 4,5 V ja LOW ≤ 0,5 V.

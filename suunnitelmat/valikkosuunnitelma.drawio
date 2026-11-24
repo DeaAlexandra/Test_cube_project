@@ -1,0 +1,255 @@
+<mxfile host="Electron" agent="Claude" pages="2">
+  <diagram id="valikkopuu" name="Valikkopuu">
+    <mxGraphModel dx="1241" dy="754" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="&lt;b&gt;Käynnistys&lt;/b&gt;&lt;br&gt;virta päälle: tunnus ja tulokset tyhjiä" vertex="1">
+          <mxGeometry height="70" width="270" x="400" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="&lt;b&gt;PÄÄVALIKKO&lt;/b&gt;&lt;br&gt;A = Analoginen &amp;nbsp; D = Digitaalinen&lt;br&gt;B = Asetukset &amp;nbsp; C = Ryhmä&lt;br&gt;&lt;i&gt;(ryhmätunnus näkyy, jos asetettu)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="90" width="300" x="385" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" parent="1" style="shape=note;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fillColor=#f5f5f5;strokeColor=#666666;size=14;" value="&lt;b&gt;SÄÄNNÖT (koko laite)&lt;/b&gt;&lt;br&gt;# = paluu päävalikkoon kaikkialta&lt;br&gt;* = vahvista / uusi / poista merkki&lt;br&gt;0 = tietokantamittaus (vain kun tunnus asetettu)&lt;br&gt;Mittaus onnistuu aina myös ilman tunnusta&lt;br&gt;Virta pois → tunnus ja tulokset katoavat (vain työmuisti)" vertex="1">
+          <mxGeometry height="120" width="360" x="760" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;ANALOGINEN&lt;/b&gt; – valitse anturi&lt;br&gt;1 = Lämpötila&lt;br&gt;2 = Valo&lt;br&gt;3 = Tuulen suunta" vertex="1">
+          <mxGeometry height="80" width="250" x="40" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;TESTIPISTE&lt;/b&gt;&lt;br&gt;1–5 = yksittäinen piste&lt;br&gt;0 = tietokantamittaus" vertex="1">
+          <mxGeometry height="70" width="250" x="40" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Yksittäinen mittaus&lt;br&gt;DAC → 1 s → 16 näytteen ka" vertex="1">
+          <mxGeometry height="70" width="130" x="10" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;TULOS&lt;/b&gt;&lt;br&gt;OK / VIRHE&lt;br&gt;* = uusi &amp;nbsp;# = valikko&lt;br&gt;&lt;i&gt;ei tallennu&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="130" x="10" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Ryhmätunnus&lt;br&gt;asetettu?" vertex="1">
+          <mxGeometry height="90" width="140" x="160" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;Ilmoitus&lt;/b&gt;&lt;br&gt;Aseta ensin ryhmätunnus (C)&lt;br&gt;→ takaisin valikkoon" vertex="1">
+          <mxGeometry height="60" width="200" x="330" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Sarjamittaus&lt;br&gt;5 pistettä × 5 kertaa&lt;br&gt;keskiarvo, min, max" vertex="1">
+          <mxGeometry height="70" width="140" x="160" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;DIGITAALINEN&lt;/b&gt; – valitse kanava&lt;br&gt;1 = Tuuli &amp;nbsp;2 = Sade&lt;br&gt;3 = Sisäkosteus &amp;nbsp;4 = Ulkokosteus" vertex="1">
+          <mxGeometry height="80" width="240" x="340" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Mittaus käynnissä (4 s)&lt;br&gt;# = keskeytä" vertex="1">
+          <mxGeometry height="60" width="180" x="370" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;TULOS&lt;/b&gt;&lt;br&gt;leveys ka, U ka, x/y&lt;br&gt;* = uusi &amp;nbsp;0 = tietokantaan&lt;br&gt;# = valikko" vertex="1">
+          <mxGeometry height="80" width="180" x="370" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Ryhmätunnus&lt;br&gt;asetettu?" vertex="1">
+          <mxGeometry height="90" width="140" x="390" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="db1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" value="&lt;b&gt;TULOS ODOTTAA LÄHETYSTÄ&lt;/b&gt; (työmuisti)&lt;br&gt;* = lähetä &amp;nbsp; 0 = mittaa uudelleen &amp;nbsp; # = valikko&lt;br&gt;&lt;i&gt;1 paikka per testi (7 kpl), mukana mittaushetken tunnus&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="400" x="60" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="db2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="MQTT-lähetys" vertex="1">
+          <mxGeometry height="50" width="200" x="160" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="db3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Lähetetty ✓&lt;br&gt;tulos poistetaan muistista" vertex="1">
+          <mxGeometry height="60" width="190" x="40" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="db4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Lähetys epäonnistui&lt;br&gt;tulos säilyy, voi yrittää uudelleen" vertex="1">
+          <mxGeometry height="60" width="200" x="290" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;ASETUKSET&lt;/b&gt;&lt;br&gt;1 = Kieli&lt;br&gt;&lt;i&gt;(myöhemmin: 2 = Verkko, 3 = Laitetiedot)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="210" x="620" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;KIELI&lt;/b&gt;&lt;br&gt;1 = Suomi &amp;nbsp; 2 = English" vertex="1">
+          <mxGeometry height="60" width="210" x="620" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Kieli vaihdettu&lt;br&gt;→ päävalikko" vertex="1">
+          <mxGeometry height="60" width="170" x="640" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;RYHMÄ&lt;/b&gt;&lt;br&gt;1 = Syötä tunnus &amp;nbsp; 2 = Tyhjennä&lt;br&gt;Nykyinen: 26A1234 / ei asetettu" vertex="1">
+          <mxGeometry height="80" width="260" x="880" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;SYÖTÄ TUNNUS&lt;/b&gt; (VVLNNNN)&lt;br&gt;VV = 0–9, L = A–D, NNNN = 0–9&lt;br&gt;väärät napit ohitetaan&lt;br&gt;* = poista merkki" vertex="1">
+          <mxGeometry height="90" width="220" x="860" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="7. merkki → tallennus automaattisesti&lt;br&gt;&quot;Tallennettu: 26A1234&quot;" vertex="1">
+          <mxGeometry height="60" width="220" x="860" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="&lt;b&gt;TYHJENNÄ&lt;/b&gt;&lt;br&gt;Poistetaanko tunnus ja&lt;br&gt;odottavat tulokset?&lt;br&gt;* = kyllä &amp;nbsp; # = ei" vertex="1">
+          <mxGeometry height="90" width="200" x="1110" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Tunnus ja odottavat&lt;br&gt;tulokset poistettu" vertex="1">
+          <mxGeometry height="60" width="180" x="1120" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="open" parent="1" style="shape=note;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fillColor=#fffde7;strokeColor=#d6b656;size=14;" value="&lt;b&gt;AVOIMET KYSYMYKSET&lt;/b&gt;&lt;br&gt;1. Digitaalinen: 0 tulosnäkymässä vai kanavavalikossa?&lt;br&gt;2. Lähetys myös keskitetysti C-valikosta (3 = Lähetä odottavat)?&lt;br&gt;3. Lähetetäänkö myös VIRHE-tulokset?&lt;br&gt;4. Montako toistoa per piste sarjamittauksessa?&lt;br&gt;5. # kielivalinnasta: päävalikkoon vai asetuksiin?&lt;br&gt;6. Jääkö * päävalikossa nollaukseksi?" vertex="1">
+          <mxGeometry height="150" width="420" x="620" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="m">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="a1" value="A">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="d1" value="D">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="b1" value="B">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="c1" value="C">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="a2" value="1–3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="a3" value="1–5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="a5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="a4" value="0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="a7" value="Kyllä">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="a6" value="Ei">
+          <mxGeometry relative="1" x="-0.1418" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="545" />
+              <mxPoint x="340" y="660" />
+              <mxPoint x="380" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="d2" value="1–4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="d2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="d3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="d3" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="d4" value="0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="d4" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="db1" value="Kyllä">
+          <mxGeometry relative="1" x="0.3578" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="655" />
+              <mxPoint x="570" y="820" />
+              <mxPoint x="260" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="d4" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="a6" value="Ei">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="db1" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="db2" value="*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="db2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="db3" value="OK">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="db2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="db4" value="virhe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="b2" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="b3" value="1 / 2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="c1" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="c2" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="c3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="c1" style="edgeStyle=orthogonalEdgeStyle;html=1;" target="c4" value="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;html=1;fontStyle=1;" target="c5" value="*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="lcd" name="LCD-näkymät">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="info" value="&lt;b&gt;LCD-näkymät&lt;/b&gt; – 20 merkkiä × 4 riviä. Ylänäyttö (lcd1, 0x23): missä olet ja mitkä napit toimivat. Alanäyttö (lcd2, 0x27): valinnat ja tulokset. Kopioi näkymäpari (Ctrl+D) ja muokkaa tekstiä kaksoisklikkaamalla." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1000" height="40" as="geometry" />
+        </mxCell>
+        <!-- 1 Päävalikko -->
+        <mxCell id="t1" value="1. Päävalikko" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l1a" value="SÄÄASEMA TESTAUS&#xa;A=analog  D=digit.&#xa;B=asetukset&#xa;C=ryhmä: 26A1234" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="85" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l1b" value="Valmis.&#xa;Valitse A,B,C tai D&#xa;&#xa;" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="270" y="85" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- 2 Analoginen testipiste -->
+        <mxCell id="t2" value="2. Analoginen – testipisteen valinta" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l2a" value="ANALOGINEN&#xa;Tuulen suunta&#xa;&#xa;#=valikko" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="245" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l2b" value="1=1.7V  2=2.2V&#xa;3=2.7V  4=3.2V&#xa;5=3.9V&#xa;0=tietokantamittaus" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="270" y="245" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- 3 Tietokantatulos -->
+        <mxCell id="t3" value="3. Tietokantamittaus – tulos odottaa" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="380" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l3a" value="TIETOKANTAMITTAUS&#xa;Tuulen suunta&#xa;Ryhmä: 26A1234&#xa;*=lähetä #=valikko" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="405" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l3b" value="TULOS: OK  5/5&#xa;ka-poikkeama 12 mV&#xa;&#xa;0=mittaa uudelleen" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="270" y="405" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- 4 Ryhmätunnuksen syöttö -->
+        <mxCell id="t4" value="4. Ryhmätunnuksen syöttö" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="560" y="60" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l4a" value="RYHMÄTUNNUS&#xa;Muoto: VVLNNNN&#xa;esim. 26A1234&#xa;*=poista #=valikko" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="560" y="85" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l4b" value="Tunnus:&#xa;26A1___&#xa;&#xa;Seuraava: numero" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="790" y="85" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- 5 Asetukset -->
+        <mxCell id="t5" value="5. Asetukset ja kieli" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="560" y="220" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l5a" value="ASETUKSET&#xa;1=Kieli&#xa;&#xa;#=valikko" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="560" y="245" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l5b" value="KIELI&#xa;1=Suomi&#xa;2=English&#xa;" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="790" y="245" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- 6 Tyhjennys -->
+        <mxCell id="t6" value="6. Ryhmätunnuksen tyhjennys" style="text;html=1;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="560" y="380" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="l6a" value="RYHMÄ&#xa;Poista tunnus ja&#xa;odottavat tulokset?&#xa;*=kyllä  #=ei" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="560" y="405" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="l6b" value="Tunnus: 26A1234&#xa;Odottavia: 2&#xa;&#xa;" style="rounded=0;html=0;whiteSpace=nowrap;fontFamily=Courier New;fontSize=13;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fillColor=#1f3d7a;fontColor=#e6f0ff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="790" y="405" width="210" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl" value="Vasen = ylänäyttö (lcd1) &amp;nbsp;&amp;nbsp; Oikea = alanäyttö (lcd2)" style="text;html=1;align=left;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="500" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

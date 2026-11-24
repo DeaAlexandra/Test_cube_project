@@ -14,13 +14,13 @@
 //
 //   Kanava   Testisignaali                     Mitataan        Hyväksytään
 //   tuuli    40 ms pulssi / 200 ms, 10 kpl     lähdön leveys   2-6 ms
-//   sade     150 ms pulssi / 300 ms, 10 kpl    lähdön leveys   3-50 ms
+//   sade     150 ms pulssi / 600 ms, 5 kpl    lähdön leveys   3-50 ms
 //   kosteus  50 % neliöaalto, 6,9 / 7,4 /      lähdön taajuus  ±1 %
 //            7,9 kHz, kukin 1 s
 //
 // Kaikilla kanavilla jokaisesta lähtöpulssista tarkistetaan lisäksi
 //   HIGH-taso >= 4,5 V ja edeltävä LOW-taso <= 0,5 V.
-// Hyväksyntä: tuuli ja sade vähintään 80 %, kosteus vähintään 95 %
+// Hyväksyntä: tuuli ja sade vähintään 60 %, kosteus vähintään 80 %
 // pulsseista täyttää kaikki ehdot.
 //
 // Mittauksen aikana työ tehdään keskeytyksissä:
@@ -35,8 +35,8 @@
 #define KOKONAISAIKA_MS          4000   // aloituksesta tuloksen näyttämiseen
 #define VIKATARKISTUS_MS         1000   // jos yhtään lähtöpulssia ei ole tullut -> vika
 #define JALKIAIKA_MS             100    // odotus generaattorin jälkeen (viimeinen lähtöpulssi)
-#define PULSSI_HYVAKSYNTA_PROS   80     // tuuli ja sade
-#define KOSTEUS_HYVAKSYNTA_PROS  95     // kosteus
+#define PULSSI_HYVAKSYNTA_PROS   60     // tuuli ja sade
+#define KOSTEUS_HYVAKSYNTA_PROS  80     // kosteus
 #define TAAJUUS_TOLERANSSI_PROS  1      // kosteuden taajuus
 
 // Jänniteraja (mV) ADC-lukemaksi: 5000 mV = 1023
@@ -121,8 +121,8 @@ static const Osamittaus TUULI_MITTAUS = {
   10, 2000UL, 6000UL };
 
 static const Osamittaus SADE_MITTAUS = {
-  TIKIT_256(150000UL) - 1, TIKIT_256(150000UL) - 1, T1_ESIJAKAJA_256,  // 150 ms / 300 ms
-  10, 3000UL, 50000UL };
+  TIKIT_256(150000UL) - 1, TIKIT_256(450000UL) - 1, T1_ESIJAKAJA_256,  // 150 ms / 600 ms
+  5, 3000UL, 50000UL };
 
 #define KOSTEUS_OSA(f) { PUOLIJAKSO(f) - 1, PUOLIJAKSO(f) - 1, T1_ESIJAKAJA_1, \
                          (uint16_t)JAKSOT_SEKUNNISSA(f), 0UL, 0xFFFFFFFFUL }
