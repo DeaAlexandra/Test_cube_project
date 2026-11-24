@@ -9,14 +9,22 @@ extern LiquidCrystal_I2C lcd1;
 extern LiquidCrystal_I2C lcd2;
 
 // ===== LAITTEEN VERSIO =====
-// Näkyy käynnistysnäkymässä (ja myöhemmin Asetukset > Laitteen tiedot).
-#define LAITE_VERSIO "2.0"
+// Näkyy käynnistysnäkymässä ja Asetukset > Laitteen tiedot -näkymässä.
+// Päivitä molemmat, kun laitteeseen ladataan uusi ohjelmaversio.
+#define LAITE_VERSIO     "2.0"
+#define LAITE_PAIVITETTY "24.11.26"   // pp.kk.vv
 
 void displaySetup();   // näytöt päälle + käynnistysnäkymä
 
 // ===== YLÄNÄYTÖN OHJAUS =====
 void naytaKaynnistys();   // TEST CUBE / Käynnistyy... / Versio, alanäyttö tyhjä
 void naytaPaavalikko();   // A/D/B/C + ryhmätunnus, alanäyttö tyhjä
+
+// ===== ASETUKSET (B) =====
+void naytaAsetukset();             // ylänäyttö: 1/2/3 + #=Valikko, alanäyttö tyhjä
+void naytaLaitteenTiedot();        // alanäyttö: versio ja päivityspäivä
+void naytaKielivalinta();          // alanäyttö: 1=Suomi 2=English
+void naytaVerkonTila(bool yhteys); // alanäyttö: Yhdistetty / Ei yhteyttä
 void naytaDigitaalinenValikko();
 void naytaAnalogiaValikko();
 void naytaTestipisteValikko(int sensori);  // Näyttää testipisteet sensorin mukaan

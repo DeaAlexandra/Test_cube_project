@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "analog.h"
+#include "asetukset.h"
 #include "digital.h"
 #include "display.h"
 #include "errormode.h"
@@ -80,6 +81,12 @@ void uiKasitteleNappi() {
   char nappi = keypad.getKey();
   if (!nappi) return;
 
+  // ----- Asetukset -----
+  if (asetuksetAktiivinen()) {
+    asetuksetKasittele(nappi);
+    return;
+  }
+
   // ----- Analoginen mittaus -----
   if (analogSyottoAktiivinen()) {
     analogKasitteleValinta(nappi);
@@ -126,11 +133,7 @@ void uiKasitteleNappi() {
     naytaAnalogiaValikko();
 
   } else if (nappi == 'B') {
-    // VÄLIAIKAINEN: B vaihtaa vielä suoraan kielen. Vaiheessa 2 tästä tulee
-    // Asetukset-valikko (1=Laitteen tiedot, 2=Kieli, 3=Verkko).
-    kieli_englanti = !kieli_englanti;
-    Serial.println(kieli_englanti ? F("Language: English") : F("Kieli: Suomi"));
-    naytaPaavalikko();
+    asetuksetAvaa();       // 1=Laitteen tiedot, 2=Kieli, 3=Verkko
 
   } else if (nappi == 'C') {
     // Ryhmävalikko tulee vaiheessa 3. Toistaiseksi C ei tee mitään.

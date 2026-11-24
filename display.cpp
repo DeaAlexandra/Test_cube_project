@@ -109,19 +109,74 @@ void naytaKaynnistys() {
 
 // ===== PÄÄVALIKKO =====
 //   A=Analog.  R=-------      (R=26A1234 kun ryhmätunnus on asetettu)
-//   D=Digitaal.
 //   B=Asetukset
 //   C=Ryhmävalikko
+//   D=Digitaal.
+// Napit aakkosjärjestyksessä, jotta oikean rivin löytää nopeasti.
 // Alanäyttö tyhjä.
 void naytaPaavalikko() {
   char tunnus[10];
   ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
 
   riviF(lcd1, 0, TXT("A=Analog.", "A=Analog"), tunnus);
-  riviF(lcd1, 1, TXT("D=Digitaal.", "D=Digital"));
-  riviF(lcd1, 2, TXT("B=Asetukset", "B=Settings"));
-  riviF(lcd1, 3, TXT("C=Ryhm" LCD_AE "valikko", "C=Group menu"));
+  riviF(lcd1, 1, TXT("B=Asetukset", "B=Settings"));
+  riviF(lcd1, 2, TXT("C=Ryhm" LCD_AE "valikko", "C=Group menu"));
+  riviF(lcd1, 3, TXT("D=Digitaal.", "D=Digital"));
   lcd2.clear();
+}
+
+// ===== ASETUKSET =====
+//   Asetukset  R=-------
+//   1=Laitteen tiedot
+//   2=Kieli
+//   3=Verkko   #=Valikko
+// Ylänäyttö pysyy tällaisena koko Asetukset-valikon ajan, alanäyttö vaihtuu
+// valinnan mukaan.
+void naytaAsetukset() {
+  char tunnus[10];
+  ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
+
+  riviF(lcd1, 0, TXT("Asetukset", "Settings"), tunnus);
+  riviF(lcd1, 1, TXT("1=Laitteen tiedot", "1=Device info"));
+  riviF(lcd1, 2, TXT("2=Kieli", "2=Language"));
+  riviF(lcd1, 3, TXT("3=Verkko   #=Valikko", "3=Network  #=Menu"));
+  lcd2.clear();
+}
+
+//   Versio 2.0
+//   Päivitetty 24.11.26
+void naytaLaitteenTiedot() {
+  riviF(lcd2, 0, TXT("Versio " LAITE_VERSIO, "Version " LAITE_VERSIO));
+  riviF(lcd2, 1, TXT("P" LCD_AE "ivitetty " LAITE_PAIVITETTY,
+                     "Updated " LAITE_PAIVITETTY));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   1=Suomi
+//   2=English
+// Kielten nimet kirjoitetaan aina omalla kielellään, jotta oikean löytää
+// vaikka nykyistä kieltä ei ymmärtäisi.
+void naytaKielivalinta() {
+  riviF(lcd2, 0, F("1=Suomi"));
+  riviF(lcd2, 1, F("2=English"));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, F(""));
+}
+
+//   Yhdistetty            tai   Ei yhteyttä
+//                                (tyhjä)
+//                                Katso ohjekirja
+void naytaVerkonTila(bool yhteys) {
+  if (yhteys) {
+    riviF(lcd2, 0, TXT("Yhdistetty", "Connected"));
+    riviF(lcd2, 2, F(""));
+  } else {
+    riviF(lcd2, 0, TXT("Ei yhteytt" LCD_AE, "No connection"));
+    riviF(lcd2, 2, TXT("Katso ohjekirja", "See user manual"));
+  }
+  riviF(lcd2, 1, F(""));
+  riviF(lcd2, 3, F(""));
 }
 
 void naytaKanava(int kanava) {

@@ -21,8 +21,8 @@ void setup() {
 
   naytaPaavalikko();   // valmis: käynnistysnäkymä vaihtuu päävalikkoon
 
-  Serial.println(TXT("Valmis. A=analoginen  D=digitaalinen  B=kieli  *=nollaa",
-                     "Ready.  A=analog      D=digital       B=lang   *=reset"));
+  Serial.println(TXT("Valmis. A=analoginen  D=digitaalinen  B=asetukset  *=nollaa",
+                     "Ready.  A=analog      D=digital       B=settings   *=reset"));
   Serial.println(TXT("D: 1=tuuli 2=sade 3=sisa 4=ulko",
                      "D: 1=wind  2=rain 3=in   4=out"));
 }
