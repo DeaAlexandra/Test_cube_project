@@ -33,11 +33,15 @@ void naytaAsetukset();             // ylänäyttö: 1/2/3 + #=Valikko, alanäytt
 void naytaLaitteenTiedot();        // alanäyttö: versio ja päivityspäivä
 void naytaKielivalinta();          // alanäyttö: 1=Suomi 2=English
 void naytaVerkonTila(bool yhteys); // alanäyttö: Yhdistetty / Ei yhteyttä
-void naytaDigitaalinenValikko();
+
+// ===== DIGITAALINEN (D) =====
+void naytaDigitaaliYla(int kanava);        // ylänäyttö: Digitaal. + mittauksen nimi (-1 = ei valittu)
+void naytaDigitaalinenValikko();           // alanäyttö: Valitse mittaus 1-4
+
+// ===== ANALOGINEN (A) =====
 void naytaAnalogYla(int sensori);          // ylänäyttö: Analoginen + mittaus + kaava (0 = ei valittu)
 void naytaAnalogiaValikko();               // alanäyttö: Valitse mittaus 1/2/3
 void naytaTestipisteValikko(int sensori);  // alanäyttö: testipisteet 1-5
-void naytaKanava(int kanava);
 
 // ===== DIGITAALINEN MITTAUS (alanäyttö) =====
 void naytaDigitaaliMittaus();   // "Mittaus..." mittauksen ajaksi

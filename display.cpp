@@ -265,64 +265,37 @@ void naytaVerkonTila(bool yhteys) {
   riviF(lcd2, 3, F(""));
 }
 
-void naytaKanava(int kanava) {
-  lcd1.clear();
-  lcd1.setCursor(0, 0);
-  if (kieli_englanti) {
-    lcd1.print("WEATHER STN TEST");
-  } else {
-    lcd1.print("S");
-    lcd1.write(2);          // Ä
-    lcd1.write(2);          // Ä
-    lcd1.print("ASEMA TESTAUS");
+// ===== DIGITAALINEN: YLÄNÄYTTÖ =====
+//   Digitaal.  R=-------
+//   Sademäärä               (tyhjä, kun mittausta ei ole vielä valittu)
+//
+//   #=Valikko
+// kanava: -1 = ei valittu, 0 = tuuli, 1 = sade, 2 = sisä, 3 = ulko.
+void naytaDigitaaliYla(int kanava) {
+  char tunnus[10];
+  ryhmaTunnusNaytolle(tunnus, sizeof(tunnus));
+
+  riviF(lcd1, 0, TXT("Digitaal.", "Digital"), tunnus);
+  switch (kanava) {
+    case 0:  riviF(lcd1, 1, TXT("Tuulen nopeus", "Wind speed"));                       break;
+    case 1:  riviF(lcd1, 1, TXT("Sadem" LCD_AE LCD_AE "r" LCD_AE, "Rainfall"));        break;
+    case 2:  riviF(lcd1, 1, TXT("Sis" LCD_AE "kosteus", "Indoor humidity"));          break;
+    case 3:  riviF(lcd1, 1, TXT("Ulkokosteus", "Outdoor humidity"));                  break;
+    default: riviF(lcd1, 1, F(""));                                                   break;
   }
-
-  lcd1.setCursor(0, 1);
-  lcd1.print(txt("DIGITAALINEN:", "DIGITAL:"));
-
-  lcd1.setCursor(0, 2);
-  if (kieli_englanti) {
-    switch (kanava) {
-      case 0: lcd1.print("Wind speed");    break;
-      case 1: lcd1.print("Rain");          break;
-      case 2: lcd1.print("Indoor humidity"); break;
-      case 3: lcd1.print("Outdoor humidity"); break;
-    }
-  } else {
-    switch (kanava) {
-      case 0: lcd1.print("Tuuli"); break;
-      case 1: lcd1.print("Sade");  break;
-      case 2:
-        lcd1.print("Sis");
-        lcd1.write(0);       // ä
-        lcd1.print("kosteus");
-        break;
-      case 3: lcd1.print("Ulkokosteus"); break;
-    }
-  }
-
-  lcd1.setCursor(0, 3);
-  lcd1.print(txt("#=valikko", "#=menu"));
+  riviF(lcd1, 2, F(""));
+  riviF(lcd1, 3, TXT("#=Valikko", "#=Menu"));
 }
 
-// ===== ALANÄYTTÖ - VALIKOT =====
+// ===== DIGITAALINEN: MITTAUKSEN VALINTA (alanäyttö) =====
+//   Valitse mittaus
+//   1=Tuuli   2=Sade
+//   3=Sisä    4=Ulko
 void naytaDigitaalinenValikko() {
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("DIGITAALINEN:", "DIGITAL:"));
-  if (kieli_englanti) {
-    lcd2.setCursor(0, 1);
-    lcd2.print("1=wind  2=rain");
-    lcd2.setCursor(0, 2);
-    lcd2.print("3=in    4=out");
-  } else {
-    lcd2.setCursor(0, 1);
-    lcd2.print("1=tuuli  2=sade");
-    lcd2.setCursor(0, 2);
-    lcd2.print("3=sis");
-    lcd2.write(0);          // ä
-    lcd2.print("   4=ulko");
-  }
+  riviF(lcd2, 0, TXT("Valitse mittaus", "Select measurement"));
+  riviF(lcd2, 1, TXT("1=Tuuli   2=Sade", "1=Wind    2=Rain"));
+  riviF(lcd2, 2, TXT("3=Sis" LCD_AE "    4=Ulko", "3=Indoor  4=Outdoor"));
+  riviF(lcd2, 3, F(""));
 }
 
 // ===== ANALOGINEN: YLÄNÄYTTÖ =====
@@ -405,98 +378,80 @@ void naytaTestipisteValikko(int sensori) {
   riviF(lcd2, 3, F(""));
 }
 
-// ===== ALANÄYTTÖ - DIGITAALINEN MITTAUS =====
-
-// Kirjoittaa 20 merkin rivin: 'vasen' alkuun ja 'oikea' oikeaan reunaan,
-// väli täytetään välilyönneillä. Koko rivi kirjoitetaan kerralla, joten
-// vanhaa tekstiä ei jää näkyviin.
-static void kirjoitaRivi(LiquidCrystal_I2C& lcd, uint8_t rivi,
-                         const char* vasen, const char* oikea) {
-  char buf[21];
-  memset(buf, ' ', 20);
-  buf[20] = '\0';
-  size_t lv = strlen(vasen); if (lv > 20) lv = 20;
-  size_t lo = strlen(oikea); if (lo > 20) lo = 20;
-  memcpy(buf, vasen, lv);
-  memcpy(buf + 20 - lo, oikea, lo);
-  lcd.setCursor(0, rivi);
-  lcd.print(buf);
-}
+// ===== DIGITAALINEN: MITTAUS JA TULOS (alanäyttö) =====
 
 // Jännite muotoon "U=4.91V" (Arduinon snprintf ei tue liukulukuja).
 static void janniteTekstiksi(char* buf, size_t koko, bool onArvo, uint16_t mV) {
-  if (onArvo) snprintf(buf, koko, "U=%u.%02uV", mV / 1000, (mV % 1000) / 10);
-  else        snprintf(buf, koko, "U=--");
+  if (onArvo) snprintf_P(buf, koko, PSTR("U=%u.%02uV"), mV / 1000, (mV % 1000) / 10);
+  else        snprintf_P(buf, koko, PSTR("U=--"));
 }
 
-static const char* tulosTeksti(bool ok) {
-  return ok ? "OK!" : txt("VIRHE!", "ERROR!");
+// Rivi 1: "Hyväksytty!  U=4.91V" tai "Virhe!       U=4.91V"
+static void digitaaliOtsikko(bool ok, bool onPulsseja, uint16_t jannite_mV) {
+  char u[10];
+  janniteTekstiksi(u, sizeof(u), onPulsseja, jannite_mV);
+  riviF(lcd2, 0, ok ? TXT("Hyv" LCD_AE "ksytty!", "Passed!")
+                    : TXT("Virhe!", "Failed!"), u);
 }
 
+//   Mittaus...
+//   Odota 4s
+//
+//   #=Keskeytä
 void naytaDigitaaliMittaus() {
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("Mittaus...", "Measuring..."));
-  lcd2.setCursor(0, 1);
-  lcd2.print(txt("Odota 4 s", "Wait 4 s"));
-  lcd2.setCursor(0, 3);
-  lcd2.print(txt("#=keskeyta", "#=abort"));
+  riviF(lcd2, 0, TXT("Mittaus...", "Measuring..."));
+  riviF(lcd2, 1, TXT("Odota 4s", "Wait 4s"));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, TXT("#=Keskeyt" LCD_AE, "#=Abort"));
 }
 
-//   TULOS
-//   Lev: 3.3ms      8/10
-//   U=4.91V          OK!
-//   *=uusi  #=valikko
+//   Hyväksytty!  U=4.91V
+//   Lev:3.3ms
+//                           (rivi 3 varattu: 0=Lähetä tulee vaiheessa 8)
+//   *=Uusi     #=Valikko
+// Hyväksyttyjen pulssien määrää ei näytetä: laite on validoinnin apuväline,
+// ei mittalaite. Määrä tulostuu edelleen sarjamonitoriin (digital.cpp).
 void naytaDigitaaliPulssiTulos(bool ok, uint32_t keskiLeveysUs, bool onPulsseja,
                                uint16_t hyvaksytyt, uint16_t kaikki, uint16_t jannite_mV) {
-  char vasen[21], oikea[21];
+  (void)hyvaksytyt; (void)kaikki;      // ei näytöllä, ks. yllä
+  char rivi[21];
 
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("TULOS", "RESULT"));
+  digitaaliOtsikko(ok, onPulsseja, jannite_mV);
 
   // Leveys millisekunteina yhdellä desimaalilla: kymmenesosat pyöristettynä.
   if (onPulsseja) {
     uint32_t kymmenykset = (keskiLeveysUs + 50UL) / 100UL;
-    snprintf(vasen, sizeof(vasen), "%s%lu.%lums", txt("Lev: ", "Width: "),
-             kymmenykset / 10UL, kymmenykset % 10UL);
+    snprintf_P(rivi, sizeof(rivi), PSTR("%S%lu.%lums"), TXT("Lev:", "Width:"),
+               kymmenykset / 10UL, kymmenykset % 10UL);
   } else {
-    snprintf(vasen, sizeof(vasen), "%s--", txt("Lev: ", "Width: "));
+    snprintf_P(rivi, sizeof(rivi), PSTR("%S--"), TXT("Lev:", "Width:"));
   }
-  snprintf(oikea, sizeof(oikea), "%u/%u", hyvaksytyt, kaikki);
-  kirjoitaRivi(lcd2, 1, vasen, oikea);
+  riviR(lcd2, 1, rivi);
 
-  janniteTekstiksi(vasen, sizeof(vasen), onPulsseja, jannite_mV);
-  kirjoitaRivi(lcd2, 2, vasen, tulosTeksti(ok));
-
-  lcd2.setCursor(0, 3);
-  lcd2.print(txt("*=uusi  #=valikko", "*=retry #=menu"));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
-//   TULOS
-//   6.9:OK 7.4:XX 7.9:OK
-//   U=4.91V       VIRHE!
-//   *=uusi  #=valikko
+//   Hyväksytty!  U=4.91V
+//   6.9:OK 7.4:EI 7.9:OK
+//                           (rivi 3 varattu: 0=Lähetä tulee vaiheessa 8)
+//   *=Uusi     #=Valikko
 void naytaDigitaaliKosteusTulos(bool ok, const bool taajuusOk[3], bool onPulsseja,
                                 uint16_t jannite_mV) {
   char rivi[21];
+  const __FlashStringHelper* ei = TXT("EI", "NO");
+  const __FlashStringHelper* on = F("OK");
 
-  lcd2.clear();
-  lcd2.setCursor(0, 0);
-  lcd2.print(txt("TULOS", "RESULT"));
+  digitaaliOtsikko(ok, onPulsseja, jannite_mV);
 
-  snprintf(rivi, sizeof(rivi), "6.9:%s 7.4:%s 7.9:%s",
-           taajuusOk[0] ? "OK" : "XX",
-           taajuusOk[1] ? "OK" : "XX",
-           taajuusOk[2] ? "OK" : "XX");
-  lcd2.setCursor(0, 1);
-  lcd2.print(rivi);
+  snprintf_P(rivi, sizeof(rivi), PSTR("6.9:%S 7.4:%S 7.9:%S"),
+             taajuusOk[0] ? on : ei,
+             taajuusOk[1] ? on : ei,
+             taajuusOk[2] ? on : ei);
+  riviR(lcd2, 1, rivi);
 
-  janniteTekstiksi(rivi, sizeof(rivi), onPulsseja, jannite_mV);
-  kirjoitaRivi(lcd2, 2, rivi, tulosTeksti(ok));
-
-  lcd2.setCursor(0, 3);
-  lcd2.print(txt("*=uusi  #=valikko", "*=retry #=menu"));
+  riviF(lcd2, 2, F(""));
+  riviF(lcd2, 3, TXT("*=Uusi     #=Valikko", "*=Retry       #=Menu"));
 }
 
 // ===== ANALOGINEN TESTITULOS =====

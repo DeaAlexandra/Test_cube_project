@@ -109,7 +109,7 @@ void uiKasitteleNappi() {
         valitseKanava(mux_kanava);                // ensin signaalitie kuntoon
         Serial.print(txt("Kanava: ", "Channel: "));
         Serial.println(nappi);
-        naytaKanava(valittu_kanava);
+        naytaDigitaaliYla(valittu_kanava);        // mittauksen nimi ylös
         digitalAloitaMittaus(valittu_kanava);     // sitten mittaus käyntiin
       } else if (nappi == '#' || nappi == '*') {
         uiResetoi();
@@ -123,7 +123,7 @@ void uiKasitteleNappi() {
     case DIG_TULOS:              // tulos tai vikailmoitus näytöllä
       if (nappi == '*') {
         vikatilaNollaa();
-        naytaKanava(valittu_kanava);              // ylänäyttö takaisin (vika peitti sen)
+        naytaDigitaaliYla(valittu_kanava);        // ylänäyttö takaisin (vika peitti sen)
         digitalAloitaMittaus(valittu_kanava);     // sama kanava uudelleen
       } else if (nappi == '#') {
         uiResetoi();
@@ -151,6 +151,7 @@ void uiKasitteleNappi() {
     Serial.println(txt("DIGITAALINEN VALINTA:", "DIGITAL SELECTION:"));
     Serial.println(txt("1=tuuli  2=sade  3=sisa  4=ulko",
                        "1=wind   2=rain  3=in    4=out"));
+    naytaDigitaaliYla(-1);   // mittausta ei vielä valittu
     naytaDigitaalinenValikko();
 
   } else if (nappi == '*') {
